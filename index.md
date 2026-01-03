@@ -7,15 +7,35 @@ profile:
 published: true
 ---
 
-[Gradfolio](https://github.com/jitinnair1/gradfolio){:target="_blank"} is a responsive, dark-mode ready Jekyll theme designed keeping academia in mind. The easiest way to install the theme is to fork it using GitHub. Check the README file for [instructions](https://github.com/jitinnair1/gradfolio#installation){:target="_blank"}.
+Hi there! Welcome to my data science portfolio. I'm Ho, and I specialize in everything from data pipeline engineering and exploratory analysis to machine learning and predictive modeling. Feel free to explore my [Skills](/skills/), check out my [Projects](/projects/), or view my full [Resume](/resume/)!
 
-If you want to use this space to write your biography here, edit the `index.md` file. You can put a picture in, too. Rename your picture to `profile.png` and put it in the `assets/images/` folder.
+---
 
-The social-icons footer can be used to link profiles from GitHub, OrcID and ReasearchGate aprart form the usual Twitter, LinkedIn and Facebook. You can add your user ID in the `_config.yml` file to link your accounts.
+## What I Bring
 
-PS: If you liked the theme, do star it on GitHub!
+I specialize in building end-to-end machine learning solutions, from data engineering and feature development to model deployment and stakeholder communication. My work spans:
 
-### Also, check out:
+- **Machine Learning & AI:** Deep learning, computer vision, NLP, and ensemble methods
+- **Data Engineering:** Building scalable pipelines with PySpark, Spark, and cloud platforms
+- **Analytics & Visualization:** Creating compelling dashboards and data stories with Tableau and Python
+- **Cross-functional Collaboration:** Translating complex technical concepts for diverse stakeholders
 
-- [autoCV](https://github.com/jitinnair1/autocv) - a LaTeX template that builds and deploys the CV using GitHub Actions, so you will always have a ready link for your latest CV
-- [Tail](https://github.com/jitinnair1/tail) - a minimal, quick-setup template for a blog
+---
+
+## Current Focus
+
+I'm seeking Data Scientist, Data Analyst, and Machine Learning Engineer roles where I can apply my skills across data engineering, analytics, and machine learning. I'm excited to join teams where I can contribute across the data workflow, from exploratory analysis and dashboard development to predictive modeling, while continuing to grow my technical expertise.
+
+I'm particularly drawn to opportunities where understanding human behavior and context enhances data-driven solutions, and where I can collaborate with cross-functional teams to turn complex data into actionable insights.
+
+---
+
+## Let's Connect!
+
+I'm always interested in discussing data science, machine learning, and opportunities to collaborate on impactful projects.
+
+**Email:** [howong112@outlook.com](mailto:howong112@outlook.com)  
+**LinkedIn:** [linkedin.com/in/hwong511](https://www.linkedin.com/in/hwong511)  
+**GitHub:** [github.com/hwong511](https://github.com/hwong511)
+
+---

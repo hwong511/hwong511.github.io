@@ -1,11 +1,11 @@
 ### your site title here
 
-title: Your Name
-description: subtitle | affiliations | motto
+title: Ho Wong
+description: Data Science Graduate with expertise in Python and R
 
-baseurl: /gradfolio #name of GitHub repository
-url: "" #custom url to be used instead of GitHub repository
-email: #
+baseurl: ""
+url: ""
+email: howong112@outlook.com
 
 # Pagination
 paginate: 4
@@ -13,15 +13,8 @@ permalink: /blog/:year/:title/
 paginate_path: /blog/page:num/
 
 # Social media links in footer
-linkedin: "#"
-stackoverflow: "#"
-github: "#"
-researchgate: "#"
-orcid: "#"
-quora: "#"
-instagram: "#"
-facebook: "#"
-bluesky: "#"
+linkedin: "https://linkedin.com/in/hwong511"
+github: "github.com/hwong511"
 
 # Markdown
 highlighter: rouge
