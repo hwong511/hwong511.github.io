@@ -1,13 +1,8 @@
 ---
 layout: post
-title: A longer Project Title
+title: Student Engagement Predictor
 description: short project description
 ---
-
-Example modified from [here](http://www.unexpected-vortices.com/sw/rippledoc/quick-markdown-example.html){:target="_blank"}.
-
-H1 Header
-============
 
 Paragraphs are separated by a blank line.
 

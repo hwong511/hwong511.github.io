@@ -41,7 +41,7 @@ collections:
     permalink: /projects/:name/
     order:
       - shortProject.md
-      - longerProjectTitle.md
+      - StudentEngagementPredictor.md
       - redirect.md
       - project4.md
       - project5.md

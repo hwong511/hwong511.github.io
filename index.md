@@ -27,15 +27,3 @@ I specialize in building end-to-end machine learning solutions, from data engine
 I'm seeking Data Scientist, Data Analyst, and Machine Learning Engineer roles where I can apply my skills across data engineering, analytics, and machine learning. I'm excited to join teams where I can contribute across the data workflow, from exploratory analysis and dashboard development to predictive modeling, while continuing to grow my technical expertise.
 
 I'm particularly drawn to opportunities where understanding human behavior and context enhances data-driven solutions, and where I can collaborate with cross-functional teams to turn complex data into actionable insights.
-
----
-
-## Let's Connect!
-
-I'm always interested in discussing data science, machine learning, and opportunities to collaborate on impactful projects.
-
-**Email:** [howong112@outlook.com](mailto:howong112@outlook.com)  
-**LinkedIn:** [linkedin.com/in/hwong511](https://www.linkedin.com/in/hwong511)  
-**GitHub:** [github.com/hwong511](https://github.com/hwong511)
-
----
