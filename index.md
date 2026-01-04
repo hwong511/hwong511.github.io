@@ -7,7 +7,7 @@ profile:
 published: true
 ---
 
-Hi there! Welcome to my data science portfolio. I'm Ho, and I specialize in everything from data pipeline engineering and exploratory analysis to machine learning and predictive modeling. Feel free to explore my [Skills](/skills/), check out my [Projects](/projects/), or view my full [Resume](/resume/)!
+Welcome! I'm Ho, and I specialize in everything from data pipeline engineering and exploratory analysis to machine learning and predictive modeling. Feel free to explore my [Skills](/skills/), check out my [Projects](/projects/), or view my full [Resume](/resume/Ho_Wong_Resume.pdf)!
 
 ---
 
