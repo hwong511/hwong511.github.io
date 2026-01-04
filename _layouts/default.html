@@ -9,6 +9,30 @@
         <meta content="width=device-width, initial-scale=1" name="viewport">
         <link rel="stylesheet" href="{{site.baseurl}}/assets/css/main.css">
 
+        <!-- Page transition styles -->
+        <style>
+            /* Page fade-in animation */
+            body {
+                animation: fadeIn 0.5s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* Fade-out on link click */
+            body.fade-out {
+                animation: fadeOut 0.3s ease-out;
+                opacity: 0;
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        </style>
+
         <h1 class="post-headline">{{site.title}}</h1>
         <h3 class="post-description">{{site.description}}</h3>
 
@@ -46,6 +70,33 @@
         </footer>
 
         {% include analytics.html %}
+
+        <!-- Page transition JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all internal links
+                const links = document.querySelectorAll('a:not([href^="http"]):not([href^="#"]):not([target="_blank"])');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+                        
+                        // Only apply to internal navigation links
+                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                            e.preventDefault();
+                            
+                            // Add fade-out class
+                            document.body.classList.add('fade-out');
+                            
+                            // Navigate after animation completes
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        </script>
 
     </body>
 
