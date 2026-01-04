@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Student Engagement Predictor
-description: Predicting classroom engagement from digital learning logs using XGBoost.
+description: Predicting student engagement from digital logs using XGBoost.
 ---
 
 ### The Question ###
@@ -69,11 +69,7 @@ df['obs_number'] = df.groupby('student_id').cumcount() + 1
 
 One thing I had to be very careful about was data leakage at the student level. Since I had multiple observations per student, if I randomly split the data into training and validation sets, I risked having data from the same student in both sets. This would lead to overly optimistic performance estimates because the model could just learn student-specific patterns, kind of like predicting someone's right half of the face with knowledge of their left half. To address this, I used GroupKFold cross-validation, ensuring that all observations from a student were contained within either the training or validation set for each fold, never both.
 
-| ROC-AUC | Score |
-|---------|-------|
-| Training Set | 0.677 |
-| Validation Set | 0.632 |
-| Test Set Performance | 0.639 |
+![Model Performance](assets/images/projects/cl/performance.png "Model Performance")
 
 The model achieved statistically significant discrimination between engagement states
 (Test AUC = 0.639). It is worth noting, however, that the effect is weak, as the AUC indicates
@@ -86,7 +82,7 @@ drop is smaller than typical gaps, suggesting the proper temporal lag features h
 learn more generalizable patterns. The consistency between validation (0.632) and test (0.639)
 performance further supports the stability of these estimates.
 
-![Tableau Dashboard](images/projects/cl/dashboard.png "Tableau Dashboard")
+![Tableau Dashboard](assets/images/projects/cl/dashboard.png "Tableau Dashboard")
 
 SHAP analysis showed what actually mattered: extended silence (time_since_last_event), recent activity levels (events_back_60s), assessment attempts, and personal baselines. 
 
