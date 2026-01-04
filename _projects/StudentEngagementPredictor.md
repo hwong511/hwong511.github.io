@@ -4,13 +4,15 @@ title: Student Engagement Predictor
 description: predicting student engagement from digital logs
 ---
 
-### The Question ###
+The Question
+============
 
 During my industry partnership with Carnegie Learning, I started this project with a simple question: Can we detect student engagement from digital learning logs? More specifically, can I predict what a trained human observer would see? Would they code a student as genuinely on-task, gaming the system, or completely checked out?
 
 This matters because human observation is expensive and doesn't scale. If digital logs could reliably proxy for human judgment, we could build systems that automatically detect and respond to disengagement.
 
-### The Data ###
+The Data
+============
 
 I worked with multimodal time-series data from students using an adaptive video-based math platform. I had two data sources: behavioral observations coded by trained observers using the BROMP protocol, and digital event logs from the IMS Caliper Analytics standard capturing every interaction. 
 
@@ -30,7 +32,8 @@ d_merged <- d1 %>%
          time_diff = as.numeric(difftime(caliper_time, bromp_time, units = "secs")))
 ~~~
 
-### Feature Engineering ###
+Feature Engineering
+============
 
 For feature engineering, I started building event counts at different time windows (30, 60, 90 seconds). I figured different behaviors might have different time signatures. Maybe gaming shows up in quick 30-second bursts but confusion takes 90 seconds to detect.
 
@@ -65,11 +68,12 @@ df[numeric_cols] = df[numeric_cols].fillna(0)
 df['obs_number'] = df.groupby('student_id').cumcount() + 1
 ~~~
 
-### Modeling ###
+Modeling
+============
 
 One thing I had to be very careful about was data leakage at the student level. Since I had multiple observations per student, if I randomly split the data into training and validation sets, I risked having data from the same student in both sets. This would lead to overly optimistic performance estimates because the model could just learn student-specific patterns, kind of like predicting someone's right half of the face with knowledge of their left half. To address this, I used GroupKFold cross-validation, ensuring that all observations from a student were contained within either the training or validation set for each fold, never both.
 
-![Model Performance](images/CL_performance.png)
+![Model Performance]({{ site.baseurl }}/assets/images/CL_performance.png)
 
 The model achieved statistically significant discrimination between engagement states
 (Test AUC = 0.639). It is worth noting, however, that the effect is weak, as the AUC indicates
@@ -82,7 +86,7 @@ drop is smaller than typical gaps, suggesting the proper temporal lag features h
 learn more generalizable patterns. The consistency between validation (0.632) and test (0.639)
 performance further supports the stability of these estimates.
 
-![Tableau Dashboard](images/CL_dashboard.png)
+![Tableau Dashboard]({{ site.baseurl }}/assets/images/CL_dashboard.png)
 
 SHAP analysis showed what actually mattered: extended silence (time_since_last_event), recent activity levels (events_back_60s), assessment attempts, and personal baselines. 
 
