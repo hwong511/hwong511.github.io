@@ -4,10 +4,10 @@ title: Streaming NLP Data Quality Engine
 description: detecting bad reviews at ingestion with Kafka
 ---
 
-The Goal
+The Goal & Progress
 ============
 
-I noticed that a lot of my past projects were notebook-based, so I wanted to try building a more production-like system for real-time NLP data quality monitoring. The goal was to create a pipeline that could ingest streaming text data, analyze it for quality issues, and flag problematic entries in real-time.
+I noticed that a lot of my past projects were notebook-based, so I wanted to try building a more production-like system for real-time NLP data quality monitoring (Also, I wanted to practice what I learned in CS544 Big Data Systems lol). The goal was to create a pipeline that could ingest streaming text data, analyze it for quality issues, and flag problematic entries in real-time.
 
 This matters because data quality problems compound. A batch pipeline might train on 10% garbage data without us knowing. A streaming pipeline can catch and route bad data immediately, giving us clean training sets and the ability to monitor quality degradation in real-time.
 
