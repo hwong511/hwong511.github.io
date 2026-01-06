@@ -9,7 +9,7 @@ The Question
 
 During my industry partnership with Carnegie Learning, I started this project with a simple question: Can we detect student engagement from digital learning logs? More specifically, can I predict what a trained human observer would see? Would they code a student as genuinely on-task, gaming the system, or completely checked out?
 
-This matters because human observation is expensive and doesn't scale. If digital logs could reliably proxy for human judgment, we could build systems that automatically detect and respond to disengagement.
+This matters because human observation, in this case following the [BROMP protocol](https://learninganalytics.upenn.edu/ryanbaker/bromp.html){:target="_blank"}, is expensive and doesn't scale. If digital logs could reliably proxy for human judgment, we could build systems that automatically detect and respond to disengagement.
 
 The Data
 ============
@@ -37,7 +37,7 @@ Feature Engineering
 
 For feature engineering, I started building event counts at different time windows (30, 60, 90 seconds). I figured different behaviors might have different time signatures. Maybe gaming shows up in quick 30-second bursts but confusion takes 90 seconds to detect.
 
-But, I quickly realized that simple counts weren't enough. I needed to measure deviation from each student's personal baseline. So for each student, I calculated their running baseline using only past observations `(events.shift(1).expanding().mean())` and then measured how much they deviated from that baseline. This became one of my strongest features.
+I quickly realized that simple counts weren't good enough... I needed to measure deviation from each student's personal baseline. So for each student, I calculated their running baseline using only past observations `(events.shift(1).expanding().mean())` and then measured how much they deviated from that baseline. This eventually became one of my strongest features.
 
 ~~~
 # Sort by student and time first!
@@ -68,12 +68,12 @@ df[numeric_cols] = df[numeric_cols].fillna(0)
 df['obs_number'] = df.groupby('student_id').cumcount() + 1
 ~~~
 
-Modeling
+Modeling & Results
 ============
 
 One thing I had to be very careful about was data leakage at the student level. Since I had multiple observations per student, if I randomly split the data into training and validation sets, I risked having data from the same student in both sets. This would lead to overly optimistic performance estimates because the model could just learn student-specific patterns, kind of like predicting someone's right half of the face with knowledge of their left half. To address this, I used GroupKFold cross-validation, ensuring that all observations from a student were contained within either the training or validation set for each fold, never both.
 
-![Model Performance]({{ site.baseurl }}/assets/images/CL_performance.png)
+![Model Performance]({{site.baseurl}}/assets/images/CL_performance.png)
 
 The model achieved statistically significant discrimination between engagement states
 (Test AUC = 0.639). It is worth noting, however, that the effect is weak, as the AUC indicates
@@ -86,23 +86,24 @@ drop is smaller than typical gaps, suggesting the proper temporal lag features h
 learn more generalizable patterns. The consistency between validation (0.632) and test (0.639)
 performance further supports the stability of these estimates.
 
-![Tableau Dashboard]({{ site.baseurl }}/assets/images/CL_dashboard.png)
+![Tableau Dashboard]({{site.baseurl}}/assets/images/CL_dashboard.png)
 
 SHAP analysis showed what actually mattered: extended silence (time_since_last_event), recent activity levels (events_back_60s), assessment attempts, and personal baselines. 
 
-I think I've figured out the fundamental problem. Digital logs capture exposure time, not cognitive engagement. You can...
+Main Takeaways
+============
+
+I think I've figured out the fundamental problem with my model performance, and that is that digital logs capture exposure time, not cognitive engagement. In other words, a student can...
 
   * ...watch a video while completely zoned out (high digital activity, low engagement). 
   * ...pause to think deeply about a problem (low digital activity, high engagement). 
   * ...game the system rapidly (high digital activity, low engagement). 
-  * ...sit confused but still trying (low digital activity, ON TASK). 
+  * ...sit confused but still try (low digital activity, ON TASK). 
   
 The digital and the cognitive just don't align cleanly.
 
-The results suggest that automated engagement detection from digital logs is not practical for deployment in high-stakes situations, as it would fail to correctly distinguish between engaged and disengaged behaviors ~36% of the time. Despite this, it does provide value over naive baseline models. 
+The results suggest that automated engagement detection from digital logs is not practical for deployment in high-stakes situations, as it would fail to correctly distinguish between engaged and disengaged behaviors ~36% of the time. That being said, it does provide value over naive baseline models, and I believe the model is good enough for low-stakes exploratory analysis or intervention screening (e.g. to flag students who might need help).
 
-To sum, the model is good enough to flag students who might need help, but not good enough to make high-stakes decisions about individual students.
+I'm actually pretty happy about the result! Finding the ceiling tells us something real about the limits of what's possible, and that the gap between behavior and cognition might be fundamental, not just a data problem waiting for more clever algorithms.
 
-Looking back, I'm actually glad I got this result! Finding the ceiling tells us something real about the limits of what's possible, and that the gap between behavior and cognition might be fundamental, not just a data problem waiting for more clever algorithms.
-
-Measuring what matters is hard. Digital logs can approximate human judgment, but they can't replace it.
+I'm proud about the methodological choices I made (namely, student-level CV and expanding-window lag features), as they provided pretty robust performance estimates. This is supported by the relatively small gap between CV (AUC = 0.677) and test (AUC = 0.639), suggesting good generalizability despite the model’s modest performance. Future work in this domain could adopt similar validationstrategies to ensure honest performance estimates.

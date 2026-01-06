@@ -1,10 +1,23 @@
 ---
 layout: post
-title: Project 5
-description: another project
+title: Car Insurance Fraud Detector
+description: predicting fraud from car damage images
 ---
 
-Example modified from [here](http://www.unexpected-vortices.com/sw/rippledoc/quick-markdown-example.html){:target="_blank"}.
+The Question
+============
+
+During my industry partnership with Carnegie Learning, I started this project with a simple question: Can we detect student engagement from digital learning logs? More specifically, can I predict what a trained human observer would see? Would they code a student as genuinely on-task, gaming the system, or completely checked out?
+
+This matters because human observation is expensive and doesn't scale. If digital logs could reliably proxy for human judgment, we could build systems that automatically detect and respond to disengagement.
+
+
+
+
+
+
+
+
 
 H1 Header
 ============
