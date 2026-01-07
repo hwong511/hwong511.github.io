@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link rel="stylesheet" href="/assets/css/main.css">
+
+        <!-- Page transition styles -->
+        <style>
+            /* Page fade-in animation */
+            body {
+                animation: fadeIn 0.5s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* Fade-out on link click */
+            body.fade-out {
+                animation: fadeOut 0.3s ease-out;
+                opacity: 0;
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        </style>
+
+        <h1 class="post-headline">Ho Wong</h1>
+        <h3 class="post-description">Data Science Graduate with expertise in Python and R</h3>
+
+        <div class="links scroll">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+        <a href="/skills/">Skills</a>
+        <a href="/assets/resume/Ho_Wong_Resume.pdf">Resume</a>
+</div>
+
+        <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Airline Satisfaction Prediction | Ho Wong</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Airline Satisfaction Prediction" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="predicting passenger satisfaction using ML in R and Python" />
+<meta property="og:description" content="predicting passenger satisfaction using ML in R and Python" />
+<link rel="canonical" href="/projects/airplanesatisfactionprediction/" />
+<meta property="og:url" content="/projects/airplanesatisfactionprediction/" />
+<meta property="og:site_name" content="Ho Wong" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-01-07T19:15:54+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Airline Satisfaction Prediction" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-01-07T19:15:54+00:00","datePublished":"2026-01-07T19:15:54+00:00","description":"predicting passenger satisfaction using ML in R and Python","headline":"Airline Satisfaction Prediction","mainEntityOfPage":{"@type":"WebPage","@id":"/projects/airplanesatisfactionprediction/"},"url":"/projects/airplanesatisfactionprediction/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+        <!-- insert favicons, used https://realfavicongenerator.net/ -->
+<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+<link rel="manifest" href="/assets/favicon/site.webmanifest" />
+
+
+        <!-- MathJax -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+     processEscapes: true
+    }
+  });
+</script>
+
+
+        <!-- Load fontawesome here for faster loadtimes: https://stackoverflow.com/a/35880730/9523246 -->
+        <script type="text/javascript"> (function() { var css = document.createElement('link'); css.href = 'https://use.fontawesome.com/releases/v6.7.2/css/all.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+
+    </head>
+
+    <body>
+        <main>
+            <article>
+                <h1 class="post-headline">Airline Satisfaction Prediction</h1>
+<p class="meta"><small>January 07, 2026</small></p>
+
+<p><a href="https://github.com/hwong511/airline-satisfaction-prediction-r-and-python" target="_blank" rel="noopener noreferrer">GitHub Repository</a></p>
+
+<h1 id="the-goal">The Goal</h1>
+
+<p>For this project, I wanted to predict airline passenger satisfaction using machine learning. Originally, I did the whole Python section of the project in Jupyter Notebook. So for the new udpate, I want to build it as a production-ready Python package.</p>
+
+<p>The old notebooks that I used are still available in the <code class="language-plaintext highlighter-rouge">notebooks/</code> folder of the GitHub repo.</p>
+
+<h1 id="modeling">Modeling</h1>
+
+<p>I implemented KNN, Logistic Regression, and Random Forest to compare different approaches. Random Forest won decisively at 96.5% test accuracy, suggesting complex feature interactions were crucial.</p>
+
+<p>The dataset mixed categorical variables (customer type, class), numeric features (age, distance), and ordinal ratings (service quality). I built custom pipelines for each model to handle these properly and prevent data leakage.</p>
+
+<p>Lastly, since we are training on 100K+ samples, I implemented model and prediction caching, cutting re-run time from minutes to seconds, which would be helpful for rapid iteration.</p>
+
+<p>The model performance is summarized below. Note that for metric selection, I chose auROC in R (for class imbalance) and accuracy in Python (due to class balance).</p>
+
+<p><img src="/assets/images/airplane_performance.png" alt="Model Performance"></p>
+
+<p><img src="/assets/images/airplane_cm.png" alt="Confusion Matrix"></p>
+
+<p>Feature importance analysis revealed that type of travel, online boarding, class, and inflight wifi were the top predictors of satisfaction.</p>
+
+<p><img src="/assets/images/airplane_ft_importance.png" alt="Feature Importance"></p>
+
+<h1 id="takeaways">Takeaways</h1>
+
+<h2 id="technical-highlights">Technical Highlights</h2>
+
+<ul>
+  <li>Random Forest consistently outperforms simpler models</li>
+  <li>Larger datasets improve model reliability and stability</li>
+  <li>Tailored preprocessing is essential for optimal performance</li>
+  <li>Ensemble models effectively capture nonlinear relationships</li>
+</ul>
+
+<h2 id="business-implications">Business Implications</h2>
+
+<ul>
+  <li>In-flight service quality is the primary driver of satisfaction</li>
+  <li>Delays significantly impact perceived experience</li>
+  <li>Class and loyalty status affect satisfaction ratings</li>
+  <li>Predictive models can flag dissatisfied passengers early for intervention</li>
+</ul>
+
+
+<!-- Comments only for posts -->
+
+
+            </article>
+        </main>
+
+        <footer>
+          <p class="copy">
+            <small> © Ho Wong 2026
+                    | Powered by Jekyll and
+                    <a target="_blank" href="https://github.com/jitinnair1/gradfolio/" rel="noopener noreferrer">Gradfolio</a>.
+                    Last updated on 07 January 2026
+            </small>
+          </p>
+
+        <div class="rounded-social-buttons">
+<a title="" class="social-button email" itemprop="email" href="mailto:%68%6F%77%6F%6E%67%31%31%32@%6F%75%74%6C%6F%6F%6B.%63%6F%6D" target="_blank">
+<i class="far fa-envelope"></i>
+</a><a title="" class="social-button linkedin" href="https://www.linkedin.com/in/https://linkedin.com/in/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-linkedin"></i>
+</a><a title="" class="social-button github" href="https://www.github.com/github.com/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-github"></i>
+</a>
+</div>
+
+
+        </footer>
+
+        <!-- Google Analytics Tracking code -->
+<script src="https://cdn.jsdelivr.net/npm/ga-lite@1/dist/ga-lite.min.js" async></script>
+<script>
+var galite = galite || {};
+galite.UA = '';
+</script>
+
+        <!-- Page transition JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all internal links
+                const links = document.querySelectorAll('a:not([href^="http"]):not([href^="#"]):not([target="_blank"])');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+                        
+                        // Only apply to internal navigation links
+                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                            e.preventDefault();
+                            
+                            // Add fade-out class
+                            document.body.classList.add('fade-out');
+                            
+                            // Navigate after animation completes
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+
+</html>

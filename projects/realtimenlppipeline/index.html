@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link rel="stylesheet" href="/assets/css/main.css">
+
+        <!-- Page transition styles -->
+        <style>
+            /* Page fade-in animation */
+            body {
+                animation: fadeIn 0.5s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* Fade-out on link click */
+            body.fade-out {
+                animation: fadeOut 0.3s ease-out;
+                opacity: 0;
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        </style>
+
+        <h1 class="post-headline">Ho Wong</h1>
+        <h3 class="post-description">Data Science Graduate with expertise in Python and R</h3>
+
+        <div class="links scroll">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+        <a href="/skills/">Skills</a>
+        <a href="/assets/resume/Ho_Wong_Resume.pdf">Resume</a>
+</div>
+
+        <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Streaming NLP Data Quality Engine | Ho Wong</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Streaming NLP Data Quality Engine" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="detecting bad reviews at ingestion with Kafka" />
+<meta property="og:description" content="detecting bad reviews at ingestion with Kafka" />
+<link rel="canonical" href="/projects/realtimenlppipeline/" />
+<meta property="og:url" content="/projects/realtimenlppipeline/" />
+<meta property="og:site_name" content="Ho Wong" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-01-07T19:15:54+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Streaming NLP Data Quality Engine" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-01-07T19:15:54+00:00","datePublished":"2026-01-07T19:15:54+00:00","description":"detecting bad reviews at ingestion with Kafka","headline":"Streaming NLP Data Quality Engine","mainEntityOfPage":{"@type":"WebPage","@id":"/projects/realtimenlppipeline/"},"url":"/projects/realtimenlppipeline/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+        <!-- insert favicons, used https://realfavicongenerator.net/ -->
+<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+<link rel="manifest" href="/assets/favicon/site.webmanifest" />
+
+
+        <!-- MathJax -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+     processEscapes: true
+    }
+  });
+</script>
+
+
+        <!-- Load fontawesome here for faster loadtimes: https://stackoverflow.com/a/35880730/9523246 -->
+        <script type="text/javascript"> (function() { var css = document.createElement('link'); css.href = 'https://use.fontawesome.com/releases/v6.7.2/css/all.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+
+    </head>
+
+    <body>
+        <main>
+            <article>
+                <h1 class="post-headline">Streaming NLP Data Quality Engine</h1>
+<p class="meta"><small>January 07, 2026</small></p>
+
+<h1 id="the-goal--progress">The Goal &amp; Progress</h1>
+
+<p>I noticed that a lot of my past projects were notebook-based, so I wanted to try building a more production-like system for real-time NLP data quality monitoring (Also, I wanted to practice what I learned in CS544 Big Data Systems lol). The goal was to create a pipeline that could ingest streaming text data, analyze it for quality issues, and flag problematic entries in real-time.</p>
+
+<p>This matters because data quality problems compound. A batch pipeline might train on 10% garbage data without us knowing. A streaming pipeline can catch and route bad data immediately, giving us clean training sets and the ability to monitor quality degradation in real-time.</p>
+
+<p>For now, I’m going with a Faust-powered Kafka streaming pipeline. Faust is a Python library for building streaming applications, and it integrates well with Kafka. The idea is to set up a Kafka topic for incoming text data, process each message with Faust to check for quality issues, and then output the results to another Kafka topic or a monitoring dashboard.</p>
+
+<p>I’m planning on adding monitoring + sentiment analysis features at some point in the future.</p>
+
+<p>All of these ^ aside, I also want to see the impact of this pipeline on downstream model performance. So I’ll set up a simple ML model that trains on both clean and unclean data to compare results.</p>
+
+<p>Later on, I might explore adding Yelp Fusion API connector (or something similar) to monitor incoming reviews from external sources in real-time.</p>
+
+<h1 id="the-data--pipeline">The Data &amp; Pipeline</h1>
+
+<p>I worked with the Yelp Open Dataset (6.9M reviews), which contains user reviews, business information, and user data. For this project, I focused on the review text to analyze quality issues.</p>
+
+<p>I built a multi-level validation system that scores each review from 0 (horrible) to 1 (perfect). The structure looks something like:</p>
+
+<ul>
+  <li>Level 1: Schema validation using Pydantic</li>
+  <li>Level 2: NLP-specific validation</li>
+  <li>Level 3: Language detection using <code class="language-plaintext highlighter-rouge">langdetect</code> with confidence threshold</li>
+  <li>Level 4: Composite quality score</li>
+</ul>
+
+<p>Following this, I encountered two technical challenges that I was somewhat unfamiliar with: implementing exactly-once semantics in a streaming context, and managing state for running statistics.</p>
+
+<p>For exactly-once semantics – which means that we need to guarantee that each review gets processed exactly once even if the system crashes mid-processing – I addressed this with three layers:</p>
+
+<ul>
+  <li>On the Kafka side, I configured the producer with <code class="language-plaintext highlighter-rouge">acks='all'</code> to ensure messages are replicated before acknowledging.</li>
+  <li>On the Faust side, I implemented stateful deduplication using a tumbling window table that tracks review IDs for one hour and expires after two.</li>
+  <li>On the database side, I used PostgreSQL’s ON CONFLICT DO UPDATE to make writes idempotent.</li>
+</ul>
+
+<p>This means if you process a review, write to the database, then crash before committing the Kafka offset, reprocessing on restart is safe because the database write is idempotent and the deduplication table prevents double-counting.</p>
+
+<p>For state management, since the data is now infinite (meaning we can’t load everything into memory like we would in a notebook), I had to rethink how to maintain running statistics. I did this by using RocksDB-backed tables in Faust.</p>
+
+<h1 id="the-results">The Results</h1>
+
+<h2 id="phase-1-faust--kafka-pipeline">Phase 1 (Faust + Kafka Pipeline):</h2>
+
+<p>Processing 115,400 reviews through the pipeline yielded the following quality score distribution:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT rating, COUNT(*), AVG(data_quality_score)
+FROM cleaned_reviews
+GROUP BY rating;
+
+ rating | count | avg_quality
+--------|-------|-------------
+    1.0 | 12611 |       0.696
+    2.0 |  9341 |       0.697
+    3.0 | 13078 |       0.697
+    4.0 | 29202 |       0.697
+    5.0 | 51168 |       0.698
+</code></pre></div></div>
+
+<h2 id="phase-2-monitoring--sentiment-analysis">Phase 2 (Monitoring + Sentiment Analysis):</h2>
+<p>More to come soon!</p>
+
+
+<!-- Comments only for posts -->
+
+
+            </article>
+        </main>
+
+        <footer>
+          <p class="copy">
+            <small> © Ho Wong 2026
+                    | Powered by Jekyll and
+                    <a target="_blank" href="https://github.com/jitinnair1/gradfolio/" rel="noopener noreferrer">Gradfolio</a>.
+                    Last updated on 07 January 2026
+            </small>
+          </p>
+
+        <div class="rounded-social-buttons">
+<a title="" class="social-button email" itemprop="email" href="mailto:%68%6F%77%6F%6E%67%31%31%32@%6F%75%74%6C%6F%6F%6B.%63%6F%6D" target="_blank">
+<i class="far fa-envelope"></i>
+</a><a title="" class="social-button linkedin" href="https://www.linkedin.com/in/https://linkedin.com/in/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-linkedin"></i>
+</a><a title="" class="social-button github" href="https://www.github.com/github.com/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-github"></i>
+</a>
+</div>
+
+
+        </footer>
+
+        <!-- Google Analytics Tracking code -->
+<script src="https://cdn.jsdelivr.net/npm/ga-lite@1/dist/ga-lite.min.js" async></script>
+<script>
+var galite = galite || {};
+galite.UA = '';
+</script>
+
+        <!-- Page transition JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all internal links
+                const links = document.querySelectorAll('a:not([href^="http"]):not([href^="#"]):not([target="_blank"])');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+                        
+                        // Only apply to internal navigation links
+                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                            e.preventDefault();
+                            
+                            // Add fade-out class
+                            document.body.classList.add('fade-out');
+                            
+                            // Navigate after animation completes
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link rel="stylesheet" href="/assets/css/main.css">
+
+        <!-- Page transition styles -->
+        <style>
+            /* Page fade-in animation */
+            body {
+                animation: fadeIn 0.5s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* Fade-out on link click */
+            body.fade-out {
+                animation: fadeOut 0.3s ease-out;
+                opacity: 0;
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        </style>
+
+        <h1 class="post-headline">Ho Wong</h1>
+        <h3 class="post-description">Data Science Graduate with expertise in Python and R</h3>
+
+        <div class="links scroll">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+        <a href="/skills/">Skills</a>
+        <a href="/assets/resume/Ho_Wong_Resume.pdf">Resume</a>
+</div>
+
+        <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Student Engagement Predictor | Ho Wong</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Student Engagement Predictor" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="predicting student engagement from digital logs with XGBoost" />
+<meta property="og:description" content="predicting student engagement from digital logs with XGBoost" />
+<link rel="canonical" href="/projects/studentengagementpredictor/" />
+<meta property="og:url" content="/projects/studentengagementpredictor/" />
+<meta property="og:site_name" content="Ho Wong" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-01-07T19:15:54+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Student Engagement Predictor" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-01-07T19:15:54+00:00","datePublished":"2026-01-07T19:15:54+00:00","description":"predicting student engagement from digital logs with XGBoost","headline":"Student Engagement Predictor","mainEntityOfPage":{"@type":"WebPage","@id":"/projects/studentengagementpredictor/"},"url":"/projects/studentengagementpredictor/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+        <!-- insert favicons, used https://realfavicongenerator.net/ -->
+<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+<link rel="manifest" href="/assets/favicon/site.webmanifest" />
+
+
+        <!-- MathJax -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+     processEscapes: true
+    }
+  });
+</script>
+
+
+        <!-- Load fontawesome here for faster loadtimes: https://stackoverflow.com/a/35880730/9523246 -->
+        <script type="text/javascript"> (function() { var css = document.createElement('link'); css.href = 'https://use.fontawesome.com/releases/v6.7.2/css/all.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+
+    </head>
+
+    <body>
+        <main>
+            <article>
+                <h1 class="post-headline">Student Engagement Predictor</h1>
+<p class="meta"><small>January 07, 2026</small></p>
+
+<h1 id="the-question">The Question</h1>
+
+<p>During my industry partnership with Carnegie Learning, I started this project with a simple question: Can we detect student engagement from digital learning logs? More specifically, can I predict what a trained human observer would see? Would they code a student as genuinely on-task, gaming the system, or completely checked out?</p>
+
+<p>This matters because human observation, in this case following the <a href="https://learninganalytics.upenn.edu/ryanbaker/bromp.html" target="_blank" rel="noopener noreferrer">BROMP protocol</a>, is expensive and doesn’t scale. If digital logs could reliably proxy for human judgment, we could build systems that automatically detect and respond to disengagement.</p>
+
+<h1 id="the-data">The Data</h1>
+
+<p>I worked with multimodal time-series data from students using an adaptive video-based math platform. I had two data sources: behavioral observations coded by trained observers using the BROMP protocol, and digital event logs from the IMS Caliper Analytics standard capturing every interaction.</p>
+
+<p>The first problem that stopped me in my tracks: how do you even merge these? The observations came at one rate, the digital events at a completely different rate (sometimes multiple per second, sometimes nothing for minutes). After some consideration, I chose merging via time windows over nearest neighbor to capture more context and patterns.</p>
+
+<p>To prevent temporal data leakage (using future information to predict current state), I used backward-looking windows only, meaning only events from 90 seconds before each observation.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>d_merged &lt;- d1 %&gt;%
+  fuzzy_left_join(d2, 
+                  by = c("student_id" = "student_id", "time_utc" = "time_utc"),
+                  match_fun = list(`==`, function(x, y) {
+                    abs(difftime(x, y, units = "secs")) &lt;= 90
+                  })) %&gt;%
+  rename(bromp_time = time_utc.x, caliper_time = time_utc.y) %&gt;%
+  mutate(student_id = student_id.x,
+         time_diff = as.numeric(difftime(caliper_time, bromp_time, units = "secs")))
+</code></pre></div></div>
+
+<h1 id="feature-engineering">Feature Engineering</h1>
+
+<p>For feature engineering, I started building event counts at different time windows (30, 60, 90 seconds). I figured different behaviors might have different time signatures. Maybe gaming shows up in quick 30-second bursts but confusion takes 90 seconds to detect.</p>
+
+<p>I quickly realized that simple counts weren’t good enough… I needed to measure deviation from each student’s personal baseline. So for each student, I calculated their running baseline using only past observations <code class="language-plaintext highlighter-rouge">(events.shift(1).expanding().mean())</code> and then measured how much they deviated from that baseline. This eventually became one of my strongest features.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Sort by student and time first!
+df = df.sort_values(['student_id', 'bromp_time']).reset_index(drop=True)
+
+lag_features = ['events_symmetric_90s', 'events_back_60s', 'pauses_back_60s', 
+                'pauses_symmetric_60s', 'time_since_last_event', 'assessment_back_60s']
+
+for col in lag_features:
+    # Mean
+    df[f'student_avg_{col}'] = df.groupby('student_id')[col].transform(
+        lambda x: x.shift(1).expanding().mean()
+    )
+    
+    # STD
+    df[f'student_std_{col}'] = df.groupby('student_id')[col].transform(
+        lambda x: x.shift(1).expanding().std()
+    )
+    
+    # Rolling mean (last 5)
+    df[f'student_recent_{col}'] = df.groupby('student_id')[col].transform(
+        lambda x: x.shift(1).rolling(window=5, min_periods=1).mean()
+    )
+
+numeric_cols = df.select_dtypes(include=[np.number]).columns
+df[numeric_cols] = df[numeric_cols].fillna(0)
+
+df['obs_number'] = df.groupby('student_id').cumcount() + 1
+</code></pre></div></div>
+
+<h1 id="modeling--results">Modeling &amp; Results</h1>
+
+<p>One thing I had to be very careful about was data leakage at the student level. Since I had multiple observations per student, if I randomly split the data into training and validation sets, I risked having data from the same student in both sets. This would lead to overly optimistic performance estimates because the model could just learn student-specific patterns, kind of like predicting someone’s right half of the face with knowledge of their left half. To address this, I used GroupKFold cross-validation, ensuring that all observations from a student were contained within either the training or validation set for each fold, never both.</p>
+
+<p><img src="/assets/images/CL_performance.png" alt="Model Performance"></p>
+
+<p>The model achieved statistically significant discrimination between engagement states
+(Test AUC = 0.639). It is worth noting, however, that the effect is weak, as the AUC indicates
+that the model correctly distinguishes between engaged and disengaged signals only 64% of the
+time, compared to 50% for random guessing.</p>
+
+<p>The gap between CV performance (0.677) and test performance (0.639) reflects the
+challenge of generalizing engagement predictions to completely new students. This 0.04 AUC
+drop is smaller than typical gaps, suggesting the proper temporal lag features helped the model
+learn more generalizable patterns. The consistency between validation (0.632) and test (0.639)
+performance further supports the stability of these estimates.</p>
+
+<p><img src="/assets/images/CL_dashboard.png" alt="Tableau Dashboard"></p>
+
+<p>SHAP analysis showed what actually mattered: extended silence (time_since_last_event), recent activity levels (events_back_60s), assessment attempts, and personal baselines.</p>
+
+<h1 id="main-takeaways">Main Takeaways</h1>
+
+<p>I think I’ve figured out the fundamental problem with my model performance, and that is that digital logs capture exposure time, not cognitive engagement. In other words, a student can…</p>
+
+<ul>
+  <li>…watch a video while completely zoned out (high digital activity, low engagement).</li>
+  <li>…pause to think deeply about a problem (low digital activity, high engagement).</li>
+  <li>…game the system rapidly (high digital activity, low engagement).</li>
+  <li>…sit confused but still try (low digital activity, ON TASK).</li>
+</ul>
+
+<p>The digital and the cognitive just don’t align cleanly.</p>
+
+<p>The results suggest that automated engagement detection from digital logs is not practical for deployment in high-stakes situations, as it would fail to correctly distinguish between engaged and disengaged behaviors ~36% of the time. That being said, it does provide value over naive baseline models, and I believe the model is good enough for low-stakes exploratory analysis or intervention screening (e.g. to flag students who might need help).</p>
+
+<p>I’m actually pretty happy about the result! Finding the ceiling tells us something real about the limits of what’s possible, and that the gap between behavior and cognition might be fundamental, not just a data problem waiting for more clever algorithms.</p>
+
+<p>I’m proud about the methodological choices I made (namely, student-level CV and expanding-window lag features), as they provided pretty robust performance estimates. This is supported by the relatively small gap between CV (AUC = 0.677) and test (AUC = 0.639), suggesting good generalizability despite the model’s modest performance. Future work in this domain could adopt similar validationstrategies to ensure honest performance estimates.</p>
+
+
+<!-- Comments only for posts -->
+
+
+            </article>
+        </main>
+
+        <footer>
+          <p class="copy">
+            <small> © Ho Wong 2026
+                    | Powered by Jekyll and
+                    <a target="_blank" href="https://github.com/jitinnair1/gradfolio/" rel="noopener noreferrer">Gradfolio</a>.
+                    Last updated on 07 January 2026
+            </small>
+          </p>
+
+        <div class="rounded-social-buttons">
+<a title="" class="social-button email" itemprop="email" href="mailto:%68%6F%77%6F%6E%67%31%31%32@%6F%75%74%6C%6F%6F%6B.%63%6F%6D" target="_blank">
+<i class="far fa-envelope"></i>
+</a><a title="" class="social-button linkedin" href="https://www.linkedin.com/in/https://linkedin.com/in/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-linkedin"></i>
+</a><a title="" class="social-button github" href="https://www.github.com/github.com/hwong511" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-github"></i>
+</a>
+</div>
+
+
+        </footer>
+
+        <!-- Google Analytics Tracking code -->
+<script src="https://cdn.jsdelivr.net/npm/ga-lite@1/dist/ga-lite.min.js" async></script>
+<script>
+var galite = galite || {};
+galite.UA = '';
+</script>
+
+        <!-- Page transition JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all internal links
+                const links = document.querySelectorAll('a:not([href^="http"]):not([href^="#"]):not([target="_blank"])');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+                        
+                        // Only apply to internal navigation links
+                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                            e.preventDefault();
+                            
+                            // Add fade-out class
+                            document.body.classList.add('fade-out');
+                            
+                            // Navigate after animation completes
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+
+</html>
