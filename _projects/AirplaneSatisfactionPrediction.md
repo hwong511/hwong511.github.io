@@ -24,13 +24,13 @@ Lastly, since we are training on 100K+ samples, I implemented model and predicti
 
 The model performance is summarized below. Note that for metric selection, I chose auROC in R (for class imbalance) and accuracy in Python (due to class balance).
 
-![Model Performance](../assets/images/airplane_performance.png)
+![Model Performance]({{site.baseurl}}/assets/images/airplane_performance.png)
 
-![Confusion Matrix](../assets/images/airplane_cm.png)
+![Confusion Matrix]({{site.baseurl}}/assets/images/airplane_cm.png)
 
 Feature importance analysis revealed that type of travel, online boarding, class, and inflight wifi were the top predictors of satisfaction.
 
-![Feature Importance](../assets/images/airplane_ft_importance.png)
+![Feature Importance]({{site.baseurl}}/assets/images/airplane_ft_importance.png)
 
 Takeaways
 ============
