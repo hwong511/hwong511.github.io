@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Car Insurance Fraud Detector
-description: predicting fraud from car damage images
+description: predicting fraud from damage images using CNN and ViT
 ---
 
 The Goal

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Student Engagement Predictor
-description: predicting student engagement from digital logs
+description: predicting student engagement from digital logs with XGBoost
 ---
 
 The Question

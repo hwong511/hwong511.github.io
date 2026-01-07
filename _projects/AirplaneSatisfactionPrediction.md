@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Airline Satisfaction Prediction
-description: predicting airline passenger satisfaction in R and Python
+description: predicting passenger satisfaction using ML in R and Python
 ---
 
 [GitHub Repository](https://github.com/hwong511/airline-satisfaction-prediction-r-and-python){:target="_blank"}
