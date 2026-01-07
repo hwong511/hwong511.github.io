@@ -1,13 +1,17 @@
 ---
 layout: post
 title: Airline Satisfaction Prediction
-description: predicting airline passenger satisfaction with ML
+description: predicting airline passenger satisfaction in R and Python
 ---
+
+[GitHub Repository](https://github.com/hwong511/airline-satisfaction-prediction-r-and-python){:target="_blank"}
 
 The Goal
 ============
 
 For this project, I wanted to predict airline passenger satisfaction using machine learning. Originally, I did the whole Python section of the project in Jupyter Notebook. So for the new udpate, I want to build it as a production-ready Python package.
+
+The old notebooks that I used are still available in the `notebooks/` folder of the GitHub repo.
 
 Modeling
 ============
