@@ -4,6 +4,8 @@ title: Student Engagement Predictor
 description: predicting student engagement from digital logs with XGBoost
 ---
 
+[GitHub Repository](https://github.com/hwong511/student-engagement-predictor){:target="_blank"}
+
 The Question
 ============
 

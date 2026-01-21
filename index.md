@@ -24,6 +24,6 @@ I specialize in building end-to-end machine learning solutions, from data engine
 
 ## Current Focus
 
-I'm seeking Data Scientist, Data Analyst, and Machine Learning Engineer roles where I can apply my skills across data engineering, analytics, and machine learning. I'm excited to join teams where I can contribute across the data workflow, from exploratory analysis and dashboard development to predictive modeling, while continuing to grow my technical expertise.
+I'm seeking roles where I can apply my skills across data engineering, analytics, and machine learning to make a real impact! I'm excited to join teams where I can contribute across the data workflow, from exploratory analysis and dashboard development to predictive modeling, while continuing to grow my technical expertise.
 
-I'm particularly drawn to opportunities where understanding human behavior and context enhances data-driven solutions, and where I can collaborate with cross-functional teams to turn complex data into actionable insights.
+I'm particularly drawn to opportunities where understanding human behavior and context enhances data-driven solutions, and where I can collaborate with cross-functional teams to turn complex data into actionable insights to make a difference.

@@ -4,6 +4,8 @@ title: Streaming NLP Data Quality Engine
 description: detecting bad reviews at ingestion with Kafka
 ---
 
+[GitHub Repository](https://github.com/hwong511/yelp-streaming-etl-pipeline){:target="_blank"}
+
 The Goal & Progress
 ============
 
